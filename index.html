@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寻宝游戏</title>
+    <style>
+      body, html {
+          height: 100%;
+          margin: 0;
+      }
+      body {
+          background-image: url('p1.png');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+      }
+      #secretImage, #key, #map, #shouwei ,#baozang{
+          display: none;
+          width: 0;
+          height: 0;
+          opacity: 0;
+          transition: transform 2s, width 2s, height 2s, opacity 2s;
+          transform: rotate(0deg);
+      }
+      button {
+        padding: 20px 40px;
+        font-size: 18px;
+        background-color: #62d288;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        outline: none;
+        position: relative;
+        text-shadow: 0 0 10px #f8f3f3, 0 0 20px #f8f3f3, 0 0 30px #f8f3f3, 0 0 40px #f8f3f3;
+      }
+      #output {
+        font-size: 20px; /* Increased font size */
+        background-color: white; /* Added white background */
+        padding: 10px; /* Added padding */
+        border-radius: 5px; /* Rounded corners */
+        margin-top: 10px; /* Added margin */
+      }
+    
+      @keyframes secret {
+        0% {
+          width: 0;
+          height: 0;
+          opacity: 0;
+          transform: rotate(0deg);
+        }
+        100% {
+          width: 200px;
+          height: 200px;
+          opacity: 1;
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes animateShadow {
+        0%, 100% {
+            box-shadow: 2px 2px 20px 10px #ff6384;
+        }
+        25% {
+            box-shadow: -2px 2px 20px 10px #ff6384;
+        }
+        50% {
+            box-shadow: -2px -2px 20px 10px #ff6384;
+        }
+        75% {
+            box-shadow: 2px -2px 20px 10px #ff6384;
+        }
+      }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-shadow: 0 0 10px #f8f3f3, 0 0 20px #f8f3f3, 0 0 30px #f8f3f3, 0 0 40px #f8f3f3;">Find the Treasure</h1>
+    <img id="secretImage" src="p2.png" alt="Treasure Image"/>
+    <img id="map" src="p5.png" alt="Treasure Image"/> 
+    <img id="shouwei" src="p8.png" alt="Treasure Image"/> 
+    <img id="baozang" src="p7.png" alt="Treasure Image"/> 
+    <img id="key" src="p3.png" alt="Treasure Image"/>
+    <button id="startGameBtn">开始游戏</button>
+    <button id="findClueBtn" style="display:none;">寻找线索</button>
+    <button id="decodeBtn" style="display:none;">解码</button>
+    <div id="output"></div>
+  <script type="text/javascript">
+     class TreasureMap {
+
+      static getInitialClue() {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve("在古老的图书馆里找到了第一个线索...");
+        }, 1000);
+      });
+    }
+  
+    static decodeAncientScript(clue) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (!clue) {
+            reject("没有线索可以解码!");
+          }
+          resolve("解码成功!宝藏在一座古老的神庙中...");
+        }, 1500);
+      });
+    }
+  
+    static searchTemple(location) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const random = Math.random();
+          if (random < 0.5) {
+            reject("糟糕!遇到了神庙守卫!");
+          }
+          resolve("找到了一个神秘的箱子...");
+        }, 2000);
+      });
+    }
+  
+    static openTreasureBox() {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve("恭喜!你找到了传说中的宝藏!");
+        }, 1000);
+      });
+    }
+  }
+
+        async function findTreasureWithPromises() {
+          // 清空之前的输出内容
+          document.getElementById('output').innerHTML = "";
+
+          // 显示初始信息
+          document.getElementById('output').innerHTML += "找到一个上锁的密码箱<br>";
+document.getElementById('output').style.fontSize = '20px'; // Increased font size
+document.getElementById('output').style.backgroundColor = 'white'; // Added white background
+          findsecret();
+          let clue = "";
+          try {
+            await TreasureMap.decodeAncientScript(clue);
+          } catch (error) {
+            document.getElementById('output').innerHTML += "提示: " + error + "<br>";
+            document.getElementById('findClueBtn').style.display = 'inline'; // 显示寻找线索按钮
+          }
+         document.getElementById('startGameBtn').style.display = 'none';
+          // 移除之前可能添加的事件监听器
+          document.getElementById('findClueBtn').removeEventListener('click', findClue);
+          document.getElementById('findClueBtn').addEventListener('click', findClue);
+          
+        }
+
+        function findClue() {
+    document.getElementById('findClueBtn').style.display = 'none'; // 隐藏寻找线索按钮
+    document.getElementById('output').style.fontSize = '20px'; // Increased font size
+    document.getElementById('output').style.backgroundColor = 'white'; // Added white background
+    document.body.style.backgroundImage = "url('p4.png')";
+    findkey();
+    // 使用 TreasureMap.getInitialClue() 并处理结果
+    TreasureMap.getInitialClue().then((initialClue) => {
+        document.getElementById('output').innerHTML += initialClue + "<br>";
+        // 将找到的线索赋值给全局变量 clue
+        clue = initialClue;
+        // 显示解码按钮
+        document.getElementById('decodeBtn').style.display = 'inline';
+        // 添加点击事件监听器到 decodeBtn
+        document.getElementById('decodeBtn').addEventListener('click', decodeClue);
+    });
+}
+
+function decodeClue() {
+    // 隐藏解码按钮
+    document.getElementById('decodeBtn').style.display = 'none';
+    document.getElementById('output').style.fontSize = '20px'; // Increased font size
+    document.getElementById('output').style.backgroundColor = 'white'; // Added white background
+    document.getElementById('key').style.display = 'none';
+    document.getElementById('secretImage').style.display = 'none';
+     findmap();
+     
+    // 使用全局变量 clue 来解码线索
+    TreasureMap.decodeAncientScript(clue).then((location) => {
+        document.getElementById('output').innerHTML += location + "<br>";
+        return TreasureMap.searchTemple(location);
+    }).then((box) => {
+        document.getElementById('output').innerHTML += box + "<br>";
+        return TreasureMap.openTreasureBox();
+    }).then((treasure) => {
+        document.getElementById('output').innerHTML += treasure + "<br>";
+        document.getElementById('map').style.display = 'none';
+        findbaozang();
+    }).catch((error) => {
+
+        document.getElementById('output').innerHTML += "任务失败: " + error + "<br>";
+        document.getElementById('map').style.display = 'none';
+        findshouwei();
+    });
+}
+
+        function findsecret() {
+            const treasureImage = document.getElementById('secretImage');
+            secretImage.style.display = 'block';
+            secretImage.style.animation = 'secret 2s forwards';
+        }
+
+        function findkey() {
+            const key = document.getElementById('key');
+            key.style.display = 'block';
+            key.style.animation = 'secret 2s forwards';
+        }
+        function findmap() {
+            const  map= document.getElementById('map');
+            map.style.display = 'block';
+            map.style.animation = 'secret 2s forwards';
+             document.body.style.backgroundImage = "url('p6.png')"
+        }
+
+        function findshouwei() {
+          const shouweiImage = document.getElementById('shouwei');
+          // 设置元素为可见
+          shouweiImage.style.display = 'block';
+          // 设置元素宽高，以便动画能够正确显示
+          shouweiImage.style.width = '200px'; 
+          shouweiImage.style.height = '200px'; 
+          shouweiImage.style.opacity = '1'; 
+           // 应用 animateShadow 动画
+          shouweiImage.style.animation = 'animateShadow 1s infinite';
+         }
+
+         function findbaozang() {
+          const baozangImage = document.getElementById('baozang');
+          // 设置元素为可见
+          baozangImage.style.display = 'block';
+          // 设置元素宽高，以便动画能够正确显示
+          baozangImage.style.width = '200px'; 
+          baozangImage.style.height = '200px'; 
+          baozangImage.style.opacity = '1'; 
+           // 应用 animateShadow 动画
+          baozangImage.style.animation = 'animateShadow 1s infinite';
+         }
+        document.getElementById('startGameBtn').addEventListener('click', findTreasureWithPromises);
+  </script>
+</body>
+</html>
